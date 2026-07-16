@@ -2,12 +2,7 @@
 
 ### Pulse-Level Quantum Control and Optimization of a Noisy, Driven Cavity Mode
 
-CavityPulse-QC is a compact simulation framework for modeling, optimizing, and visualizing microwave/optical-driven **bosonic mode** dynamics under photon loss and dephasing. It is a companion project to
-[PulseForge-QC](https://github.com/SoumyajitPal-2210/PulseForge-QC), reusing the same pipeline architecture — Hamiltonian modeling, decoherence-aware simulation, waveform engineering, numerical optimization, and physical interpretation — but applied to a genuinely different physical system: not a two-level qubit, but a truncated **quantum harmonic oscillator** (e.g. a microwave cavity resonator or an optical cavity mode).
-
-The guiding scenario:
-
-> Start from a cavity mode in vacuum, apply a shaped microwave/optical pulse, evolve the system under realistic photon-loss and dephasing noise, and optimize the control pulse to maximize population transfer into the single-photon Fock state |1⟩.
+CavityPulse-QC is a compact simulation framework for modeling, optimizing, and visualizing microwave/optical-driven **bosonic mode** dynamics under photon loss and dephasing. 
 
 ---
 
