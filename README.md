@@ -340,20 +340,20 @@ This trajectory is the most physically informative output of the simulation, it 
 The current implementation is intentionally simple, but physically meaningful.
 
 **What it already demonstrates well:**
-- pulse-driven bosonic-mode control,
-- open-system dynamics in a truncated Fock space,
-- decoherence-aware simulation (loss + dephasing),
-- fidelity optimization,
-- phase-space diagnostics,
-- an exact, verifiable theoretical fidelity ceiling for the chosen control model,
-- ideal-versus-noisy evolution comparison from a shared Hamiltonian.
+- Pulse-driven bosonic-mode control,
+- Open-system dynamics in a truncated Fock space,
+- Decoherence-aware simulation (loss + dephasing),
+- Fidelity optimization,
+- Phase-space diagnostics,
+- An exact, verifiable theoretical fidelity ceiling for the chosen control model,
+- Ideal-versus-noisy evolution comparison from a shared Hamiltonian.
 
 **What still limits current performance:**
-- the drive is strictly linear in $a, a^\dagger$, which restricts reachable states to (quasi-)coherent states,
-- only one control degree of freedom is optimized (amplitude),
-- the pulse family is fixed to a single Gaussian,
-- no nonlinear (e.g. two-photon, Kerr-mediated) drive terms are included,
-- the mode is single-cavity only,
+- The drive is strictly linear in $a, a^\dagger$, which restricts reachable states to (quasi-)coherent states,
+- Only one control degree of freedom is optimized (amplitude),
+- The pulse family is fixed to a single Gaussian,
+- No nonlinear (e.g. two-photon, Kerr-mediated) drive terms are included,
+- The mode is single-cavity only,
 - $\kappa$ and $\gamma_\phi$ are generic rather than hardware-calibrated values.
 
 These limitations are useful as they expose, in closed form, exactly why a linear one-parameter drive cannot exceed $1/e$ fidelity against a Fock state, instead of artificially producing unrealistically high fidelities that wouldn't reflect anything about actual hardware constraints.
