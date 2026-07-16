@@ -35,15 +35,15 @@ A microwave cavity or optical resonator mode is not controlled by an abstract "p
 
 This turns "prepare a single photon" into a genuine control-engineering problem:
 
-- the drive must build up population in the target Fock state,
-- photon loss and dephasing act continuously throughout the drive, not just afterward,
-- and — as this project's results reveal — the *type* of drive itself imposes a hard structural limit on what's reachable, independent of how well any single parameter is tuned.
+- The drive must build up population in the target Fock state,
+- Photon loss and dephasing act continuously throughout the drive, not just afterward,
+- And, as this project's results reveal: the *type* of drive itself imposes a hard structural limit on what's reachable, independent of how well any single parameter is tuned.
 
 CavityPulse-QC simulates exactly that workflow computationally. The guiding scenario is simple to state and physically meaningful:
 
 > Start from a cavity mode in vacuum, apply a shaped microwave/optical pulse, evolve the system under realistic photon-loss and dephasing noise, and optimize the control pulse to maximize population transfer into the single-photon Fock state |1⟩.
 
-Everything in the repository — the pulse shape, the noise model, the solver, the optimizer, the diagnostics, and the closed-system reference — exists in service of answering that one question quantitatively, and then explaining *why* the answer comes out the way it does.
+Everything in the repository: the pulse shape, the noise model, the solver, the optimizer, the diagnostics, and the closed-system reference, exists in service of answering that one question quantitatively, and then explaining *why* the answer comes out the way it does.
 
 ---
 
@@ -81,7 +81,7 @@ The project models these effects with the Lindblad master equation:
 
 $$\dot{\rho} = -i[H,\rho] + \sum_k\left(L_k\rho L_k^\dagger - \frac{1}{2}\{L_k^\dagger L_k, \rho\}\right)$$
 
-where $\rho$ is the density matrix and $L_k$ are collapse operators encoding irreversible interaction with the environment. This formalism matters because pure-state (Schrödinger-equation) evolution alone cannot represent loss or dephasing — the density-matrix framework is what lets coherent dynamics, population transfer, relaxation, and decoherence all be captured simultaneously in one consistent picture.
+where $\rho$ is the density matrix and $L_k$ are collapse operators encoding irreversible interaction with the environment. This formalism matters because pure-state (Schrödinger-equation) evolution alone cannot represent loss or dephasing, the density-matrix framework is what lets coherent dynamics, population transfer, relaxation, and decoherence all be captured simultaneously in one consistent picture.
 
 ### Photon Loss and Dephasing
 
@@ -179,7 +179,7 @@ Holds all physical and numerical parameters: Fock-space truncation size, drive d
 
 ### `pulses/pulse_shapes.py`
 
-Defines the Gaussian pulse envelope as a standalone function of time. Waveform generation is kept in its own module because pulse shaping is a core abstraction in pulse-level control systems — it is the one piece of the pipeline a hardware engineer would actually redesign first when moving to more advanced pulse families.
+Defines the Gaussian pulse envelope as a standalone function of time. Waveform generation is kept in its own module because pulse shaping is a core abstraction in pulse-level control systems, it is the one piece of the pipeline a hardware engineer would actually redesign first when moving to more advanced pulse families.
 
 ### `noise/noise_model.py`
 
@@ -199,7 +199,7 @@ Plots $\langle n\rangle, \langle x\rangle, \langle p\rangle$ across the full pul
 
 ### `reference_layer/closed_system_reference.py`
 
-Re-evolves the *same* Hamiltonian and *same* pulse with the collapse operators removed ($\kappa = \gamma_\phi = 0$), providing a clean, decoherence-free reference against which the noisy pulse-driven evolution can be compared. Building this reference from the project's own Hamiltonian (rather than an external circuit-model library) isolates the effect of decoherence *exactly* — nothing about the Hamiltonian or pulse shape differs between the two runs. The distinction between ideal, closed-system evolution and realistic, noisy pulse dynamics is one of the central ideas in quantum control, and this module makes that distinction explicit and quantitative.
+Re-evolves the *same* Hamiltonian and *same* pulse with the collapse operators removed ($\kappa = \gamma_\phi = 0$), providing a clean, decoherence-free reference against which the noisy pulse-driven evolution can be compared. Building this reference from the project's own Hamiltonian (rather than an external circuit-model library) isolates the effect of decoherence *exactly*, nothing about the Hamiltonian or pulse shape differs between the two runs. The distinction between ideal, closed-system evolution and realistic, noisy pulse dynamics is one of the central ideas in quantum control, and this module makes that distinction explicit and quantitative.
 
 ---
 
@@ -297,13 +297,13 @@ The initial fidelity, $F \approx 0.07$ at amplitude $A=1.0$, is relatively poor.
 
 ### Optimization Behavior
 
-After optimization, $F \approx 0.368$ at $A \approx 0.494$ — more than five times the baseline. This confirms three things at once: the simulator responds correctly to the control parameter, the control landscape contains real recoverable structure (the optimizer isn't just sitting at its initial guess), and the L-BFGS-B optimization loop is functioning correctly.
+After optimization, $F \approx 0.368$ at $A \approx 0.494$, more than five times the baseline. This confirms three things at once: the simulator responds correctly to the control parameter, the control landscape contains real recoverable structure and the L-BFGS-B optimization loop is functioning correctly.
 
-The fidelity still remains well below what a perfect state preparation would require, but that limitation is expected given how constrained the control model is. Only the pulse **amplitude** is optimized — pulse width, center, pulse family, and drive structure are all held fixed. The optimizer is therefore solving a tightly constrained one-parameter control problem, not a fully expressive one, and the result should be read in that light.
+The fidelity still remains well below what a perfect state preparation would require, but that limitation is expected given how constrained the control model is. Only the pulse **amplitude** is optimized, pulse width, center, pulse family, and drive structure are all held fixed. The optimizer is therefore solving a tightly constrained one-parameter control problem, not a fully expressive one, and the result should be read in that light.
 
 ### The Central Physical Insight: A Hard Coherent-State Ceiling
 
-The drive term $(\Omega(t)/2)(a + a^\dagger)$ is **linear** in the ladder operators. A linear drive on a harmonic oscillator generates a *displacement* of the vacuum state — it can only ever produce a **coherent state** $|\alpha\rangle$ (up to the small distortions introduced by loss and dephasing), never an exact Fock state.
+The drive term $(\Omega(t)/2)(a + a^\dagger)$ is **linear** in the ladder operators. A linear drive on a harmonic oscillator generates a *displacement* of the vacuum state, it can only ever produce a **coherent state** $|\alpha\rangle$ (up to the small distortions introduced by loss and dephasing), never an exact Fock state.
 
 A coherent state's overlap with the Fock state $|1\rangle$ is:
 
@@ -313,7 +313,7 @@ which is maximized at $|\alpha|^2 = 1$, giving a hard theoretical ceiling of
 
 $$P(1)_{\max} = \frac{1}{e} \approx 0.367879$$
 
-**The optimizer converged to $F = 0.367789$ — within $10^{-4}$ of this exact theoretical bound.** This is not a coincidence: no matter how the single amplitude parameter is tuned, a Gaussian-shaped *linear* drive cannot exceed this ceiling, because the family of states it can reach is restricted to (quasi-)coherent states, and $1/e$ is the maximum any coherent state can achieve against $|1\rangle$. This gives the control model an exact, closed-form fidelity limit, which makes the limitation unusually easy to verify quantitatively rather than just observe empirically.
+**The optimizer converged to $F = 0.367789$  within $10^{-4}$ of this exact theoretical bound.** This is not a coincidence: no matter how the single amplitude parameter is tuned, a Gaussian-shaped *linear* drive cannot exceed this ceiling, because the family of states it can reach is restricted to (quasi-)coherent states, and $1/e$ is the maximum any coherent state can achieve against $|1\rangle$. This gives the control model an exact, closed-form fidelity limit, which makes the limitation unusually easy to verify quantitatively rather than just observe empirically.
 
 ### Phase-Space (Quadrature) Analysis
 
@@ -323,7 +323,7 @@ $$P(1)_{\max} = \frac{1}{e} \approx 0.367879$$
 
 <p align="center"><sub>⟨n⟩, ⟨x⟩, ⟨p⟩ expectation values across the pulse duration, evaluated at the optimized amplitude (A ≈ 0.494).</sub></p>
 
-This trajectory is the most physically informative output of the simulation — it shows *how* the mode got to its final fidelity, not just the number itself.
+This trajectory is the most physically informative output of the simulation, it shows *how* the mode got to its final fidelity, not just the number itself.
 
 **Why ⟨x⟩ stays at ≈ 0 throughout.** The drive Hamiltonian is proportional to $(a+a^\dagger)$, i.e. the $x$ quadrature operator itself. A linear drive along $x$ displaces the state purely along $p$ (the canonically conjugate direction), leaving $\langle x\rangle$ essentially unchanged. This is not an uninteresting flat line — it's a sanity check that the Hamiltonian implementation, the drive coupling direction, and the resulting phase-space geometry are all internally consistent with the stated physics.
 
@@ -331,7 +331,7 @@ This trajectory is the most physically informative output of the simulation — 
 
 **Why ⟨n⟩ rises to about 1.2 and settles near 1.0.** $\langle n\rangle = |\alpha(t)|^2$ for a coherent state tracks the squared magnitude of the phase-space displacement. It overshoots slightly above 1 near the pulse's trailing edge, then photon loss brings it back down to settle near $\langle n\rangle \approx 1.0$ by the end of the evolution — consistent with a final state close to a coherent state with $|\alpha|^2 \approx 1$, exactly the point at which $P(1)$ is maximized.
 
-**The synthesis.** The optimizer is not failing numerically — the control model itself is limited. It successfully finds the best amplitude *within the reachable family of coherent-like states produced by a linear drive*, but a single amplitude parameter cannot escape that family or push past the $1/e$ ceiling that family imposes against a Fock-state target. This is exactly the motivation behind nonlinear and multi-parameter pulse-shaping methods used in real bosonic-mode control — two-photon drives, Kerr-mediated interactions, and measurement-based conditional preparation all exist specifically to address what this minimal model exposes cleanly: a one-parameter linear Gaussian drive hits a hard, interpretable, closed-form fidelity ceiling.
+**The synthesis.** The optimizer is not failing numerically,  the control model itself is limited. It successfully finds the best amplitude *within the reachable family of coherent-like states produced by a linear drive*, but a single amplitude parameter cannot escape that family or push past the $1/e$ ceiling that family imposes against a Fock-state target. This is exactly the motivation behind nonlinear and multi-parameter pulse-shaping methods used in real bosonic-mode control — two-photon drives, Kerr-mediated interactions, and measurement-based conditional preparation all exist specifically to address what this minimal model exposes cleanly: a one-parameter linear Gaussian drive hits a hard, interpretable, closed-form fidelity ceiling.
 
 ---
 
