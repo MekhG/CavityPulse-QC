@@ -36,9 +36,9 @@ A microwave cavity or optical resonator mode is not controlled by an abstract "p
 
 This turns "prepare a single photon" into a genuine control-engineering problem:
 
-- the drive must build up population in the target Fock state,
-- photon loss and dephasing act continuously throughout the drive, not just afterward,
-- and — as this project's results reveal — the *type* of drive itself imposes a hard structural limit on what's reachable, independent of how well any single parameter is tuned.
+- The drive must build up population in the target Fock state,
+- Photon loss and dephasing act continuously throughout the drive, not just afterward,
+- This project's results reveal: the *type* of drive itself imposes a hard structural limit on what's reachable, independent of how well any single parameter is tuned.
 
 CavityPulse-QC simulates exactly that workflow computationally, using the same five-stage pipeline as the qubit-based PulseForge-QC project, applied to a different Hilbert space.
 
