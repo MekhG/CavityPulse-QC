@@ -61,7 +61,7 @@ $$H(t) = \Delta\, a^\dagger a + \frac{\Omega(t)}{2}(a + a^\dagger)$$
 
 where $\Delta = \omega_{\text{cavity}} - \omega_{\text{drive}}$ is the detuning, $a, a^\dagger$ are bosonic ladder operators on a Fock space truncated to `N_LEVELS` levels, and $\Omega(t)$ is the drive envelope.
 
-The current configuration sets $\omega_{\text{cavity}} = \omega_{\text{drive}}$, so $\Delta = 0$. This removes free-evolution drift from the dynamics entirely and isolates the effect of the control pulse and the decoherence channels — nothing else is competing with the drive for the mode's evolution. That choice keeps the resulting dynamics easy to interpret physically, which matters later when explaining the phase-space trajectories.
+The current configuration sets $\omega_{\text{cavity}} = \omega_{\text{drive}}$, so $\Delta = 0$. This removes free-evolution drift from the dynamics entirely and isolates the effect of the control pulse and the decoherence channels,  nothing else is competing with the drive for the mode's evolution. That choice keeps the resulting dynamics easy to interpret physically, which matters later when explaining the phase-space trajectories.
 
 ### Gaussian Pulse Engineering
 
