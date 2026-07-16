@@ -71,7 +71,7 @@ $$\Omega(t) = A\exp\left(-\frac{(t-t_0)^2}{2\sigma^2}\right)$$
 
 where $A$ is the pulse amplitude, $t_0$ is the pulse center, and $\sigma$ controls the pulse width.
 
-The Gaussian shape isn't an arbitrary convenience. Smooth pulses are the standard choice in real microwave/optical cavity control because abrupt waveform discontinuities introduce high-frequency spectral content that can excite unwanted transitions into higher, non-target Fock levels — the bosonic-mode analogue of leakage in a multi-level system. So even this single-parameter pulse already reflects a real hardware-aware control principle: smoother pulses generally produce cleaner dynamics.
+The Gaussian shape isn't an arbitrary convenience. Smooth pulses are the standard choice in real microwave/optical cavity control because abrupt waveform discontinuities introduce high-frequency spectral content that can excite unwanted transitions into higher, non-target Fock levels. The bosonic-mode analogue of leakage in a multi-level system. So even this single-parameter pulse already reflects a real hardware-aware control principle: smoother pulses generally produce cleaner dynamics.
 
 ### Open Quantum Systems
 
@@ -105,7 +105,7 @@ The expectation values $\langle n\rangle$, $\langle x\rangle$, $\langle p\rangle
 
 $$\langle n\rangle = \langle a^\dagger a\rangle, \qquad \langle x\rangle = \langle a + a^\dagger\rangle, \qquad \langle p\rangle = i\langle a^\dagger - a\rangle$$
 
-Physically, $\langle n\rangle$ tracks photon-number buildup, while $\langle x\rangle$ and $\langle p\rangle$ track the mode's position in phase space: displacement along these quadratures indicates coherent, pulse-driven control, and their behavior over time reveals how coherence and population evolve jointly. Monitoring all three observables gives far more physical insight than looking at the final fidelity alone — it shows *how* the state got there, not just where it ended up.
+Physically, $\langle n\rangle$ tracks photon-number buildup, while $\langle x\rangle$ and $\langle p\rangle$ track the mode's position in phase space: displacement along these quadratures indicates coherent, pulse-driven control, and their behavior over time reveals how coherence and population evolve jointly. Monitoring all three observables gives far more physical insight than looking at the final fidelity alone,  it shows *how* the state got there, not just where it ended up.
 
 ---
 
