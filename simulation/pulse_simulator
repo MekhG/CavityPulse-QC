@@ -1,0 +1,129 @@
+"""
+simulation/pulse_simulator.py
+
+The core simulation engine. Responsible for:
+  1. building the time-dependent Hamiltonian for a driven bosonic mode,
+  2. calling QuTiP's mesolve to evolve the Lindblad dynamics,
+  3. evaluating the final-state fidelity against a target Fock state.
+
+Every other module either feeds parameters into this one or consumes its
+output, exactly as in the qubit-based version of this project.
+
+Hamiltonian (rotating frame)
+-----------------------------
+    H(t) = DETUNING * a^dag a + (Omega(t) / 2) * (a + a^dag)
+
+With DETUNING = 0 (resonant drive), the free-evolution term vanishes and
+only the drive term shapes the dynamics, which keeps the resulting <n>,
+<x>, <p> trajectories directly attributable to the pulse and the noise
+channels.
+
+QuTiP version note
+-------------------
+This module calls mesolve with c_ops passed as a keyword argument,
+matching the QuTiP >= 5.0 signature. If running an older QuTiP 4.x
+environment, pass c_ops positionally instead:
+    mesolve(H, rho0, tlist, c_ops, args=...)
+"""
+
+import numpy as np
+import qutip as qt
+
+from pulses.pulse_shapes import gaussian_envelope
+from noise.noise_model import build_collapse_operators
+
+
+def _pulse_coefficient(t, amplitude, center, sigma, **kwargs):
+    """Time-dependent coefficient for the drive term, used by mesolve."""
+    return 0.5 * gaussian_envelope(t, amplitude, center, sigma)
+
+
+def _detuning_coefficient(t, detuning, **kwargs):
+    """Time-dependent (here, constant) coefficient for the free-evolution term."""
+    return detuning
+
+
+def build_hamiltonian(n_levels, detuning):
+    """
+    Build the time-independent operator pieces of H(t).
+
+    Returns
+    -------
+    a, n_op, x_like : qutip.Qobj
+        Annihilation operator, number operator, and the (a + a^dag)
+        quadrature-coupling operator used in the drive term.
+    """
+    a = qt.destroy(n_levels)
+    n_op = a.dag() * a
+    x_like = a + a.dag()
+    return a, n_op, x_like
+
+
+def run_simulation(amplitude, config, return_states=False):
+    """
+    Evolve the driven, lossy bosonic mode from vacuum |0> under the
+    Lindblad master equation and evaluate the fidelity with the target
+    Fock state.
+
+    Parameters
+    ----------
+    amplitude : float
+        Peak Gaussian pulse amplitude A.
+    config : module
+        The system_config module (or any object exposing the same
+        attributes), so amplitude can be swept without re-importing config.
+    return_states : bool
+        If True, also return the full list of density matrices (needed by
+        the visualization module to plot <n>, <x>, <p> over time).
+
+    Returns
+    -------
+    fidelity : float
+        F = <target| rho_final |target>
+    result : qutip.solver.Result
+        Full mesolve result object (states, times, etc.) -- only populated
+        if return_states is True, otherwise the states list is omitted to
+        save memory during optimization sweeps.
+    """
+    a, n_op, x_like = build_hamiltonian(config.N_LEVELS, config.DETUNING)
+
+    H = [
+        [n_op, _detuning_coefficient],
+        [x_like, _pulse_coefficient],
+    ]
+
+    c_ops = build_collapse_operators(config.N_LEVELS, config.KAPPA, config.GAMMA_PHI)
+
+    rho0 = qt.fock_dm(config.N_LEVELS, 0)  # start in vacuum |0><0|
+    tlist = np.linspace(0, config.PULSE_DURATION, config.N_TIME_POINTS)
+
+    args = {
+        "amplitude": amplitude,
+        "center": config.PULSE_CENTER,
+        "sigma": config.PULSE_SIGMA,
+        "detuning": config.DETUNING,
+    }
+
+    e_ops = [n_op, x_like, 1j * (a.dag() - a)] if return_states else []
+    options = {"store_states": True}
+
+    result = qt.mesolve(H, rho0, tlist, c_ops=c_ops, e_ops=e_ops, args=args, options=options)
+    rho_final = result.states[-1]
+
+    # Final-state fidelity against the target Fock state.
+    fidelity = qt.expect(qt.fock_dm(config.N_LEVELS, config.TARGET_FOCK_STATE), rho_final)
+
+    # Check leakage into the highest kept Fock level -- a soundness check
+    # that the truncation is large enough for the chosen amplitude range.
+    top_level_population = qt.expect(
+        qt.fock_dm(config.N_LEVELS, config.N_LEVELS - 1), rho_final
+    )
+    if top_level_population > 1e-3:
+        import warnings
+
+        warnings.warn(
+            f"Population in highest truncated Fock level = "
+            f"{top_level_population:.4e}; consider increasing N_LEVELS."
+        )
+
+    return fidelity, result
