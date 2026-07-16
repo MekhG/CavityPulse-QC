@@ -208,11 +208,11 @@ Re-evolves the *same* Hamiltonian and *same* pulse with the collapse operators r
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/CavityPulse-QC.git
+git clone https://github.com/MekhG/CavityPulse-QC.git
 cd CavityPulse-QC
 ```
 
-### Create a Virtual Environment (Recommended)
+### Create a Virtual Environment 
 
 **Linux / macOS**
 
